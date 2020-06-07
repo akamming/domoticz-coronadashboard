@@ -1,6 +1,6 @@
 #Covid 19 dashboardp plugin by akamming
 """
-<plugin key="COVID19NL" name="Dashboard coronavirus NL" author="akamming" version="1.0.0" wikilink="http://www.domoticz.com/wiki/plugins/plugin.html" externallink="https://coronadashboard.rijksoverheid.nl/json/NL.json">
+<plugin key="COVID19NL" name="Dashboard coronavirus NL" author="akamming" version="1.0.0" wikilink="https://github.com/akamming/domoticz-coronadashboard" externallink="https://coronadashboard.rijksoverheid.nl/json/NL.json">
     <description>
         <h2>Dashboard coronavirus NL</h2><br/>
         <br/>
