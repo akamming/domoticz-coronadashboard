@@ -19,7 +19,7 @@ import json
 timestamp=datetime.datetime.now()
 interval=3600  #time in seconds between measurements
 url="https://coronadashboard.rijksoverheid.nl/json/NL.json" #url of the json
-debug=True
+debug=False
     
 def Debug(text):
     if (debug):
@@ -41,7 +41,6 @@ def UpdateCustomSensor(SensorName,UnitID,Value):
             Debug("Creating device "+SensorName)
             Domoticz.Device(Name=SensorName, Unit=UnitID, TypeName="Custom").Create()
         Debug ("Updating "+SensorName+"("+str(UnitID)+") with value "+str(Value))
-        #Devices[UnitID].Update(nValue=float(Value), sValue=str(Value))
         Devices[UnitID].Update(nValue=0, sValue=str(Value))
         Domoticz.Log("Counter ("+str(SensorName)+")")
 
@@ -52,7 +51,6 @@ def UpdatePercentageSensor(SensorName,UnitID,Value):
             Domoticz.Device(Name=SensorName, Unit=UnitID, TypeName="Percentage").Create()
         Debug ("Updating "+SensorName+"("+str(UnitID)+") with value "+str(Value))
         Devices[UnitID].Update(nValue=int(Value), sValue=str(Value))
-        #Devices[UnitID].Update(nValue=0, sValue=str(Value))
         Domoticz.Log("Percentage ("+str(SensorName)+")")
 
 class BasePlugin:
