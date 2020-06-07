@@ -174,11 +174,15 @@ class BasePlugin:
 
         Debug("onStart called")
         #Get interval from var
-        if int(Parameters["Mode1"])<mininterval:
-            Debug("Configured interval below minimum interval: leaving at default ("+str(interval)+")")
+        if (len(Parameters["Mode1")>0):
+            if int(Parameters["Mode1"])<mininterval:
+                Debug("Configured interval below minimum interval: leaving at default ("+str(interval)+")")
+            else:
+                interval=int(Parameters["Mode1"])
+                Debug("Interval was changed to "+str(interval))
         else:
-            interval=int(Parameters["Mode1"])
-            Debug("Interval was changed to "+str(interval))
+                Debug("interval not configured: leaving at default ("+str(interval)+")")
+            
 
         #Get SafetyRegions from config
         SafetyRegions=Parameters["Mode2"].split(',')
