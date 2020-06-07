@@ -4,9 +4,25 @@
     <description>
         <h2>Dashboard coronavirus NL</h2><br/>
         <br/>
-        Experimental: Loads the counters of the NL corona dashboard into domoticz sensors
+        Experimental: Loads the counters of the NL corona dashboard into domoticz sensors<br/>
+        <br/>
+        <h3>Configuration</h3>
+        Interval Connfigures the number of seconds between calls.<br/>
+        <br/>
+        If you want to local data from your safety region(s), enter the id's from 1 or more (comma seperated) safety regions. You can find the id's of the safety regions at the <a href="https://www.rijksoverheid.nl/onderwerpen/veiligheidsregios-en-crisisbeheersing/veiligheidsregios">website of the Rijksoverheid</a><br/>
+        <br/> 
+        for example: 
+        <ul style="list-style-type:square">
+            <li>specifying "1" will create sensors for safety region Gronigen</li>
+            <li>"1,3,5" will create sensor for Groningen(1), Drenthe(3) and Noord en Oost Gelderland(5).. </li>
+            <li>leaving empty will create no sensors for individual safety regions.</li>
+        </ul>
+        <br/>
+        Please bear in mind that every safety region requires an extra call to the API, so a low interval with a lot of safety regions will spam the rijksoverheid dashboard!<br/><br/><br/>
     </description>
     <params>
+        <param field="Mode1" label="Interval" width="150px" required="false" default="3600" />
+        <param field="Mode2" label="Safety Region(s)" width="300px" required="true" default="" />
     </params>
 </plugin>
 """
