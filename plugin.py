@@ -174,7 +174,7 @@ class BasePlugin:
 
         Debug("onStart called")
         #Get interval from var
-        if (len(Parameters["Mode1")>0):
+        if(len(Parameters["Mode1"])>0):
             if int(Parameters["Mode1"])<mininterval:
                 Debug("Configured interval below minimum interval: leaving at default ("+str(interval)+")")
             else:
