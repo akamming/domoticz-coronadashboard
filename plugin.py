@@ -38,7 +38,7 @@ interval=3600  #time in seconds between measurements
 dashboardurl="https://coronadashboard.rijksoverheid.nl/json/NL.json" #url of the json
 safetyregionurlprefix="https://coronadashboard.rijksoverheid.nl/json/VR"
 safetyregionurlpostfix=".json"
-debug=False
+debug=True
 SafetyRegions=[]
     
 def Debug(text):
@@ -46,32 +46,29 @@ def Debug(text):
         Domoticz.Log("Debug: "+str(text))
 
 
-def UpdateCounterSensor(SensorName,UnitID,Value):
-       #Creating devices in case they aren't there...
-        if not (UnitID in Devices):
-            Debug("Creating device "+SensorName)
-            Domoticz.Device(Name=SensorName, Unit=UnitID, TypeName="Counter").Create()
-        Debug ("Updating "+SensorName+"("+str(UnitID)+") with value "+str(Value))
-        Devices[UnitID].Update(nValue=int(Value), sValue=str(Value))
-        Domoticz.Log("Counter ("+str(SensorName)+")")
-
 def UpdateCustomSensor(SensorName,UnitID,Value):
        #Creating devices in case they aren't there...
         if not (UnitID in Devices):
             Debug("Creating device "+SensorName)
             Domoticz.Device(Name=SensorName, Unit=UnitID, TypeName="Custom").Create()
-        Debug ("Updating "+SensorName+"("+str(UnitID)+") with value "+str(Value))
-        Devices[UnitID].Update(nValue=0, sValue=str(Value))
-        Domoticz.Log("Counter ("+str(SensorName)+")")
+        if Devices[UnitID].sValue==str(Value):
+            Debug("No need to update "+Devices[UnitID].Name+", value["+Devices[UnitID].sValue+"] was not changed to ["+str(Value)+"]")
+        else:
+            Debug ("Updating "+Devices[UnitID].Name+"("+str(UnitID)+","+Devices[UnitID].sValue+") with value ["+str(Value)+"]")
+            Devices[UnitID].Update(nValue=0, sValue=str(Value))
+            Domoticz.Log("Counter ("+Devices[UnitID].Name+")")
 
 def UpdatePercentageSensor(SensorName,UnitID,Value):
        #Creating devices in case they aren't there...
         if not (UnitID in Devices):
             Debug("Creating device "+SensorName)
             Domoticz.Device(Name=SensorName, Unit=UnitID, TypeName="Percentage").Create()
-        Debug ("Updating "+SensorName+"("+str(UnitID)+") with value "+str(Value))
-        Devices[UnitID].Update(nValue=int(Value), sValue=str(Value))
-        Domoticz.Log("Percentage ("+str(SensorName)+")")
+        if Devices[UnitID].sValue==str(Value):
+            Debug("No need to update "+Devices[UnitID].Name+", value["+Devices[UnitID].sValue+"] was not changed to ["+str(Value)+"]")
+        else:
+            Debug ("Updating "+Devices[UnitID].Name+"("+str(UnitID)+") with value "+str(Value))
+            Devices[UnitID].Update(nValue=int(Value), sValue=str(Value))
+            Domoticz.Log("Percentage ("+Devices[UnitID].Name+")")
 
 class BasePlugin:
     enabled = False
