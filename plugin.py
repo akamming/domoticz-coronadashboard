@@ -38,7 +38,7 @@ interval=3600  #time in seconds between measurements
 dashboardurl="https://coronadashboard.rijksoverheid.nl/json/NL.json" #url of the json
 safetyregionurlprefix="https://coronadashboard.rijksoverheid.nl/json/VR"
 safetyregionurlpostfix=".json"
-debug=True
+debug=False
 SafetyRegions=[]
     
 def Debug(text):
