@@ -51,24 +51,18 @@ def UpdateCustomSensor(SensorName,UnitID,Value):
         if not (UnitID in Devices):
             Debug("Creating device "+SensorName)
             Domoticz.Device(Name=SensorName, Unit=UnitID, TypeName="Custom").Create()
-        if Devices[UnitID].sValue==str(Value):
-            Debug("No need to update "+Devices[UnitID].Name+", value["+Devices[UnitID].sValue+"] was not changed to ["+str(Value)+"]")
-        else:
-            Debug ("Updating "+Devices[UnitID].Name+"("+str(UnitID)+","+Devices[UnitID].sValue+") with value ["+str(Value)+"]")
-            Devices[UnitID].Update(nValue=0, sValue=str(Value))
-            Domoticz.Log("Counter ("+Devices[UnitID].Name+")")
+        Debug ("Updating "+Devices[UnitID].Name+"("+str(UnitID)+","+Devices[UnitID].sValue+") with value ["+str(Value)+"]")
+        Devices[UnitID].Update(nValue=0, sValue=str(Value))
+        Domoticz.Log("Counter ("+Devices[UnitID].Name+")")
 
 def UpdatePercentageSensor(SensorName,UnitID,Value):
        #Creating devices in case they aren't there...
         if not (UnitID in Devices):
             Debug("Creating device "+SensorName)
             Domoticz.Device(Name=SensorName, Unit=UnitID, TypeName="Percentage").Create()
-        if Devices[UnitID].sValue==str(Value):
-            Debug("No need to update "+Devices[UnitID].Name+", value["+Devices[UnitID].sValue+"] was not changed to ["+str(Value)+"]")
-        else:
-            Debug ("Updating "+Devices[UnitID].Name+"("+str(UnitID)+") with value "+str(Value))
-            Devices[UnitID].Update(nValue=int(Value), sValue=str(Value))
-            Domoticz.Log("Percentage ("+Devices[UnitID].Name+")")
+        Debug ("Updating "+Devices[UnitID].Name+"("+str(UnitID)+") with value "+str(Value))
+        Devices[UnitID].Update(nValue=int(Value), sValue=str(Value))
+        Domoticz.Log("Percentage ("+Devices[UnitID].Name+")")
 
 class BasePlugin:
     enabled = False
