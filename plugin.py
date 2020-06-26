@@ -33,7 +33,8 @@ import json
 
 #global vars
 timestamp=datetime.datetime.now()
-mininterval=10 #if interval specified below this value, revert to default interval (see next line)
+LastDashboardUpdate=0
+mininterval=900 #if interval specified below this value, revert to default interval (see next line)
 interval=3600  #time in seconds between measurements
 dashboardurl="https://coronadashboard.rijksoverheid.nl/json/NL.json" #url of the json
 safetyregionurlprefix="https://coronadashboard.rijksoverheid.nl/json/VR"
@@ -69,6 +70,7 @@ class BasePlugin:
 
     def UpdateSensors(self):
         global timestamp
+        global LastDashboardUpdate
 
         # Make a get request to get the  data
         Debug("Retrieving global json data from dashboard")
@@ -86,74 +88,81 @@ class BasePlugin:
                 else:
                     Debug("Key="+key+" = "+str(value)+"(str)")
 
-            #Update the sensors
-            UpdateCustomSensor("Intensive care-opnames per dag",1,data["intake_intensivecare_ma"]["value"])
-            UpdateCustomSensor("Ziekenhuis opnames per dag",2,data["intake_hospital_ma"]["value"])
-            UpdateCustomSensor("Positief getest mensen per dag (per 100.000 inwoners)",3,data["infected_people_delta_normalized"]["value"])
-            UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,data["infectious_people_count_normalized"]["value"])
-            UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,data["infectious_people_count"]["value"])
-            UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(data["reproduction_index"]["value"]*100))
-            UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["infected_people_nursery_count_daily"]["value"])
-            UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["deceased_people_nursery_count_daily"]["value"])
+            LastUpdate=int(data["last_generated"])
 
-            #Update the timestamp to prevent too many requests to the json call
-            timestamp=datetime.datetime.now()
+            Debug("Last updated : "+str(datetime.datetime.fromtimestamp(LastUpdate)))
 
-            #Update SafetyRegionSensors
-            if len(SafetyRegions)>0:
-                for SafetyRegion in SafetyRegions:
-                    if len(SafetyRegion)==0: 
-                        region=0
-                    else:
-                        region=int(SafetyRegion)
+            if (LastUpdate>LastDashboardUpdate):
+                Debug("LastUpdate("+str(LastUpdate)+") > LastDashboardUpdate("+str(LastDashboardUpdate)+"), updating sensors...")
+                Domoticz.Log("New data available at dashboard, updating sensors...")
 
-                    if region>0:
-                        # Get json data
-                        Debug("Getting json for Safety Region "+str(region))
-                        if (region<10):
-                            Debug("region<10, adding an extra 0 to url and prefix")
-                            response = requests.get(safetyregionurlprefix+"0"+str(region)+safetyregionurlpostfix)
-                            prefix="VR0"+str(region)+" "
+                #Update the sensors
+                UpdateCustomSensor("Intensive care-opnames per dag",1,data["intake_intensivecare_ma"]["value"])
+                UpdateCustomSensor("Ziekenhuis opnames per dag",2,data["intake_hospital_ma"]["value"])
+                UpdateCustomSensor("Positief getest mensen per dag (per 100.000 inwoners)",3,data["infected_people_delta_normalized"]["value"])
+                UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,data["infectious_people_count_normalized"]["value"])
+                UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,data["infectious_people_count"]["value"])
+                UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(data["reproduction_index"]["value"]*100))
+                UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["infected_people_nursery_count_daily"]["value"])
+                UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["deceased_people_nursery_count_daily"]["value"])
+
+                #Update the timestamp to prevent too many requests to the json call
+                timestamp=datetime.datetime.now()
+
+                #Update SafetyRegionSensors
+                if len(SafetyRegions)>0:
+                    for SafetyRegion in SafetyRegions:
+                        if len(SafetyRegion)==0: 
+                            region=0
                         else:
-                            response = requests.get(safetyregionurlprefix++str(region)+safetyregionurlpostfix)
-                            prefix="VR"+str(region)+" "
+                            region=int(SafetyRegion)
 
-                        if (response.status_code==200):
-                            #Parse the json
-                            data=response.json()
+                        if region>0:
+                            # Get json data
+                            Debug("Getting json for Safety Region "+str(region))
+                            if (region<10):
+                                Debug("region<10, adding an extra 0 to url and prefix")
+                                response = requests.get(safetyregionurlprefix+"0"+str(region)+safetyregionurlpostfix)
+                                prefix="VR0"+str(region)+" "
+                            else:
+                                response = requests.get(safetyregionurlprefix++str(region)+safetyregionurlpostfix)
+                                prefix="VR"+str(region)+" "
 
-                            # do some debugging
-                            for key,value in data.items():
-                                if type(value)==dict:
-                                    Debug("Key="+key+" = "+str(data[key]["value"])+"(dict)")
-                                else:
-                                    Debug("Key="+key+" = "+str(value)+"(str)")
+                            if (response.status_code==200):
+                                #Parse the json
+                                data=response.json()
 
-                            #Update the sensors
-                            #UpdateCustomSensor(prefix+"Intensive care-opnames per dag",region*9+1,data["intake_intensivecare_ma"]["value"])
-                            UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["intake_hospital_ma"]["value"])
-                            UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["infected_people_delta_normalized"]["value"])
-                            #UpdateCustomSensor(prefix+"Aantal bestmettelijke mensen (per 100.000 inwoners)",region*9+4,data["infectious_people_count_normalized"]["value"])
-                            #UpdateCustomSensor(prefix+"Totaal aantal besmettelijke mensen",region*9+5,data["infectious_people_count"]["value"])
-                            #UpdatePercentageSensor(prefix+"Reproductiegetal (percentage)",region*9+6,float(data["reproduction_index"]["value"]*100))
-                            #UpdateCustomSensor(prefix+"Positief geteste verpleeghuisbewoners per dag",region*9+7,data["infected_people_nursery_count_daily"]["value"])
-                            #UpdateCustomSensor(prefix+"Overleden verpleeghuisbewoners per dag",region*9+8,data["deceased_people_nursery_count_daily"]["value"])
-                            
-                            
+                                # do some debugging
+                                for key,value in data.items():
+                                    if type(value)==dict:
+                                        Debug("Key="+key+" = "+str(data[key]["value"])+"(dict)")
+                                    else:
+                                        Debug("Key="+key+" = "+str(value)+"(str)")
+
+                                #Update the sensors
+                                #UpdateCustomSensor(prefix+"Intensive care-opnames per dag",region*9+1,data["intake_intensivecare_ma"]["value"])
+                                UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["intake_hospital_ma"]["value"])
+                                UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["infected_people_delta_normalized"]["value"])
+                                #UpdateCustomSensor(prefix+"Aantal bestmettelijke mensen (per 100.000 inwoners)",region*9+4,data["infectious_people_count_normalized"]["value"])
+                                #UpdateCustomSensor(prefix+"Totaal aantal besmettelijke mensen",region*9+5,data["infectious_people_count"]["value"])
+                                #UpdatePercentageSensor(prefix+"Reproductiegetal (percentage)",region*9+6,float(data["reproduction_index"]["value"]*100))
+                                #UpdateCustomSensor(prefix+"Positief geteste verpleeghuisbewoners per dag",region*9+7,data["infected_people_nursery_count_daily"]["value"])
+                                #UpdateCustomSensor(prefix+"Overleden verpleeghuisbewoners per dag",region*9+8,data["deceased_people_nursery_count_daily"]["value"])
+                                
+                                
+                            else:
+                                Debug("Error retrieving data for region "+SafetyRegion+"("+response.status_code+")")
                         else:
-                            Debug("Error retrieving data for region "+SafetyRegion+"("+response.status_code+")")
+                            Debug("Unable to proces region "+SafetyRegion)
+                else:
+                    Debug("No safetyregions to process")
 
-
-                    else:
-                        Debug("Unable to proces region "+SafetyRegion)
+                LastDashboardUpdate=LastUpdate #Record the timestamp of the data to prevent double updates...
             else:
-                Debug("No safetyregions to process")
-
+                Debug("LastUpdate("+str(LastUpdate)+") < LastDashboardUpdate("+str(LastDashboardUpdate)+"), not updating sensors...")
+                Domoticz.Log("No new data available since last update, not updating sensors")
         else:
             Domoticz.Log("Error getting coronadashboard date: "+str(response.status_code))
-
-
-
 
 
     def __init__(self):
@@ -167,7 +176,7 @@ class BasePlugin:
         #Get interval from var
         if(len(Parameters["Mode1"])>0):
             if int(Parameters["Mode1"])<mininterval:
-                Debug("Configured interval below minimum interval: leaving at default ("+str(interval)+")")
+                Domoticz.Log("Configured interval below minimum interval: leaving at default ("+str(interval)+")")
             else:
                 interval=int(Parameters["Mode1"])
                 Debug("Interval was changed to "+str(interval))
