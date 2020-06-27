@@ -106,9 +106,6 @@ class BasePlugin:
                 UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["infected_people_nursery_count_daily"]["value"])
                 UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["deceased_people_nursery_count_daily"]["value"])
 
-                #Update the timestamp to prevent too many requests to the json call
-                timestamp=datetime.datetime.now()
-
                 #Update SafetyRegionSensors
                 if len(SafetyRegions)>0:
                     for SafetyRegion in SafetyRegions:
@@ -176,7 +173,8 @@ class BasePlugin:
         #Get interval from var
         if(len(Parameters["Mode1"])>0):
             if int(Parameters["Mode1"])<mininterval:
-                Domoticz.Log("Configured interval below minimum interval: leaving at default ("+str(interval)+")")
+                interval=mininterval
+                Domoticz.Log("Error: Configured interval below minimum interval: leaving at minimum ("+str(interval)+")")
             else:
                 interval=int(Parameters["Mode1"])
                 Debug("Interval was changed to "+str(interval))
@@ -215,15 +213,20 @@ class BasePlugin:
         Debug("onDisconnect called")
 
     def onHeartbeat(self):
+        global timestamp
+
         Debug("onHeartbeat called")
 
         ElapsedTime=datetime.datetime.now()-timestamp
-        if (ElapsedTime.total_seconds()>interval):
+        Debug("Elapsed Time in seconds="+str(ElapsedTime.total_seconds()))
+        if (ElapsedTime.total_seconds()>(interval-1)):   #correct for 1 second (processing time for the heartbeat)
             #enough time passed, let's update the sensors
             self.UpdateSensors()
-        else:
+
+            #Update the timestamp to prevent too many requests to the json call
+            timestamp=datetime.datetime.now()
+        #else:
             #not enough time passed
-            Debug("Elapsed time = "+str(ElapsedTime))
 
 global _plugin
 _plugin = BasePlugin()
