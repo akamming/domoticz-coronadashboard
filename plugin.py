@@ -157,7 +157,6 @@ class BasePlugin:
                 LastDashboardUpdate=LastUpdate #Record the timestamp of the data to prevent double updates...
             else:
                 Debug("LastUpdate("+str(LastUpdate)+") < LastDashboardUpdate("+str(LastDashboardUpdate)+"), not updating sensors...")
-                Domoticz.Log("No new data available since last update, not updating sensors")
         else:
             Domoticz.Log("Error getting coronadashboard date: "+str(response.status_code))
 
