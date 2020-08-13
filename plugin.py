@@ -39,7 +39,7 @@ interval=3600  #time in seconds between measurements
 dashboardurl="https://coronadashboard.rijksoverheid.nl/json/NL.json" #url of the json
 safetyregionurlprefix="https://coronadashboard.rijksoverheid.nl/json/VR"
 safetyregionurlpostfix=".json"
-debug=False
+debug=True
 SafetyRegions=[]
     
 def Debug(text):
@@ -81,10 +81,11 @@ class BasePlugin:
             #Parse the json
             data=response.json()
 
-            # do some debugging
+            #do some debugging
             for key,value in data.items():
                 if type(value)==dict:
-                    Debug("Key="+key+" = "+str(data[key]["value"])+"(dict)")
+                    #Debug("Key="+key+" = "+str(data[key]["value"])+"(dict)")
+                    Debug("Key="+key+" = (dict)")
                 else:
                     Debug("Key="+key+" = "+str(value)+"(str)")
 
@@ -97,14 +98,17 @@ class BasePlugin:
                 Domoticz.Log("New data available at dashboard, updating sensors...")
 
                 #Update the sensors
-                UpdateCustomSensor("Intensive care-opnames per dag",1,data["intake_intensivecare_ma"]["value"])
-                UpdateCustomSensor("Ziekenhuis opnames per dag",2,data["intake_hospital_ma"]["value"])
-                UpdateCustomSensor("Positief getest mensen per dag (per 100.000 inwoners)",3,data["infected_people_delta_normalized"]["value"])
-                UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,data["infectious_people_count_normalized"]["value"])
-                UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,data["infectious_people_count"]["value"])
-                UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(data["reproduction_index"]["value"]*100))
-                UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["infected_people_nursery_count_daily"]["value"])
-                UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["deceased_people_nursery_count_daily"]["value"])
+                UpdateCustomSensor("Intensive care-opnames per dag",1,data["intake_intensivecare_ma"]["last_value"]["moving_average_ic"])
+                UpdateCustomSensor("Ziekenhuis opnames per dag",2,data["intake_hospital_ma"]["last_value"]["moving_average_hospital"])
+                UpdateCustomSensor("Positief getest mensen per dag (per 100.000 inwoners)",3,data["infected_people_delta_normalized"]["last_value"]["infected_daily_increase"])
+                UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,data["infectious_people_count_normalized"]["last_value"]["infectious_avg_normalized"])
+                UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,data["infectious_people_count"]["last_value"]["infectious_avg"])
+                if (data["reproduction_index"]["last_value"]["reproduction_index_avg"]==None):
+                    Debug("reproduction index = none")
+                else:
+                    UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(data["reproduction_index"]["last_value"]["reproduction_index_avg"])*100)
+                UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["infected_people_nursery_count_daily"]["last_value"]["infected_nursery_daily"])
+                UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["deceased_people_nursery_count_daily"]["last_value"]["deceased_nursery_daily"])
 
                 #Update SafetyRegionSensors
                 if len(SafetyRegions)>0:
@@ -132,14 +136,14 @@ class BasePlugin:
                                 # do some debugging
                                 for key,value in data.items():
                                     if type(value)==dict:
-                                        Debug("Key="+key+" = "+str(data[key]["value"])+"(dict)")
+                                        Debug("Key="+key+" = (dict)")
                                     else:
                                         Debug("Key="+key+" = "+str(value)+"(str)")
 
                                 #Update the sensors
                                 #UpdateCustomSensor(prefix+"Intensive care-opnames per dag",region*9+1,data["intake_intensivecare_ma"]["value"])
-                                UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["intake_hospital_ma"]["value"])
-                                UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["infected_people_delta_normalized"]["value"])
+                                UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["intake_hospital_ma"]["last_value"]["intake_hospital_ma"])
+                                UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["infected_people_delta_normalized"]["last_value"]["infected_people_delta_normalized"])
                                 #UpdateCustomSensor(prefix+"Aantal bestmettelijke mensen (per 100.000 inwoners)",region*9+4,data["infectious_people_count_normalized"]["value"])
                                 #UpdateCustomSensor(prefix+"Totaal aantal besmettelijke mensen",region*9+5,data["infectious_people_count"]["value"])
                                 #UpdatePercentageSensor(prefix+"Reproductiegetal (percentage)",region*9+6,float(data["reproduction_index"]["value"]*100))
