@@ -39,7 +39,7 @@ interval=3600  #time in seconds between measurements
 dashboardurl="https://coronadashboard.rijksoverheid.nl/json/NL.json" #url of the json
 safetyregionurlprefix="https://coronadashboard.rijksoverheid.nl/json/VR"
 safetyregionurlpostfix=".json"
-debug=True
+debug=False
 SafetyRegions=[]
     
 def Debug(text):
@@ -103,10 +103,10 @@ class BasePlugin:
                 UpdateCustomSensor("Positief getest mensen per dag (per 100.000 inwoners)",3,data["infected_people_delta_normalized"]["last_value"]["infected_daily_increase"])
                 UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,data["infectious_people_count_normalized"]["last_value"]["infectious_avg_normalized"])
                 UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,data["infectious_people_count"]["last_value"]["infectious_avg"])
-                if (data["reproduction_index"]["last_value"]["reproduction_index_avg"]==None):
+                if (data["reproduction_index_last_known_average"]["last_value"]["reproduction_index_avg"]==None):
                     Debug("reproduction index = none")
                 else:
-                    UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(data["reproduction_index"]["last_value"]["reproduction_index_avg"])*100)
+                    UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(data["reproduction_index_last_known_average"]["last_value"]["reproduction_index_avg"])*100)
                 UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["infected_people_nursery_count_daily"]["last_value"]["infected_nursery_daily"])
                 UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["deceased_people_nursery_count_daily"]["last_value"]["deceased_nursery_daily"])
 
