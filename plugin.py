@@ -109,6 +109,7 @@ class BasePlugin:
                     UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(data["reproduction_index_last_known_average"]["last_value"]["reproduction_index_avg"])*100)
                 UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["infected_people_nursery_count_daily"]["last_value"]["infected_nursery_daily"])
                 UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["deceased_people_nursery_count_daily"]["last_value"]["deceased_nursery_daily"])
+                UpdateCustomSensor("Rioolwater meting",9,data["rioolwater_metingen"]["last_value"]["average"])
 
                 #Update SafetyRegionSensors
                 if len(SafetyRegions)>0:
