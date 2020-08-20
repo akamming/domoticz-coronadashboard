@@ -142,14 +142,9 @@ class BasePlugin:
                                         Debug("Key="+key+" = "+str(value)+"(str)")
 
                                 #Update the sensors
-                                #UpdateCustomSensor(prefix+"Intensive care-opnames per dag",region*9+1,data["intake_intensivecare_ma"]["value"])
+                                UpdateCustomSensor(prefix+"virusdeeltjes per mm rioolwater",region*9+1,data["average_sewer_installation_per_region"]["last_value"]["average"])
                                 UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["results_per_region"]["last_value"]["hospital_moving_avg_per_region"])
                                 UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["results_per_region"]["last_value"]["infected_moving_avg_per_region"])
-                                #UpdateCustomSensor(prefix+"Aantal bestmettelijke mensen (per 100.000 inwoners)",region*9+4,data["infectious_people_count_normalized"]["value"])
-                                #UpdateCustomSensor(prefix+"Totaal aantal besmettelijke mensen",region*9+5,data["infectious_people_count"]["value"])
-                                #UpdatePercentageSensor(prefix+"Reproductiegetal (percentage)",region*9+6,float(data["reproduction_index"]["value"]*100))
-                                #UpdateCustomSensor(prefix+"Positief geteste verpleeghuisbewoners per dag",region*9+7,data["infected_people_nursery_count_daily"]["value"])
-                                #UpdateCustomSensor(prefix+"Overleden verpleeghuisbewoners per dag",region*9+8,data["deceased_people_nursery_count_daily"]["value"])
                                 
                                 
                             else:
