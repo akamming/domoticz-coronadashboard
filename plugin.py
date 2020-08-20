@@ -127,7 +127,7 @@ class BasePlugin:
                                 response = requests.get(safetyregionurlprefix+"0"+str(region)+safetyregionurlpostfix)
                                 prefix="VR0"+str(region)+" "
                             else:
-                                response = requests.get(safetyregionurlprefix++str(region)+safetyregionurlpostfix)
+                                response = requests.get(safetyregionurlprefix+str(region)+safetyregionurlpostfix)
                                 prefix="VR"+str(region)+" "
 
                             if (response.status_code==200):
