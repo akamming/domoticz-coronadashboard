@@ -144,7 +144,9 @@ class BasePlugin:
                                 #Update the sensors
                                 UpdateCustomSensor(prefix+"virusdeeltjes per mm rioolwater",region*9+1,data["average_sewer_installation_per_region"]["last_value"]["average"])
                                 UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["results_per_region"]["last_value"]["hospital_moving_avg_per_region"])
-                                UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["results_per_region"]["last_value"]["infected_moving_avg_per_region"])
+                                UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["results_per_region"]["last_value"]["infected_increase_per_region"])
+                                UpdateCustomSensor(prefix+"Aantal besmette personen",region*9+4,data["results_per_region"]["last_value"]["infected_total_counts_per_region"])
+                                UpdateCustomSensor(prefix+"Aantal personen in ziekenhuis",region*9+5,data["results_per_region"]["last_value"]["hospital_total_counts_per_region"])
                                 
                                 
                             else:
