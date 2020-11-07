@@ -107,9 +107,10 @@ class BasePlugin:
                     Debug("reproduction index = none")
                 else:
                     UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(data["reproduction_index_last_known_average"]["last_value"]["reproduction_index_avg"])*100)
-                UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["infected_people_nursery_count_daily"]["last_value"]["infected_nursery_daily"])
-                UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["deceased_people_nursery_count_daily"]["last_value"]["deceased_nursery_daily"])
-                UpdateCustomSensor("Rioolwater meting",9,data["rioolwater_metingen"]["last_value"]["average"])
+                UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["nursing_home"]["last_value"]["newly_infected_people"])
+                UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["nursing_home"]["last_value"]["deceased_daily"])
+                UpdateCustomSensor("Rioolwater meting",9,data["sewer"]["last_value"]["average"])
+                UpdateCustomSensor("positief geteste mensen",10,data["infected_people_total"]["last_value"]["infected_daily_total"])
 
                 #Update SafetyRegionSensors
                 if len(SafetyRegions)>0:
@@ -142,7 +143,7 @@ class BasePlugin:
                                         Debug("Key="+key+" = "+str(value)+"(str)")
 
                                 #Update the sensors
-                                UpdateCustomSensor(prefix+"virusdeeltjes per mm rioolwater",region*9+1,data["average_sewer_installation_per_region"]["last_value"]["average"])
+                                UpdateCustomSensor(prefix+"virusdeeltjes per mm rioolwater",region*9+1,data["sewer"]["last_value"]["average"])
                                 UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["results_per_region"]["last_value"]["hospital_moving_avg_per_region"])
                                 UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["results_per_region"]["last_value"]["infected_increase_per_region"])
                                 UpdateCustomSensor(prefix+"Aantal besmette personen",region*9+4,data["results_per_region"]["last_value"]["infected_total_counts_per_region"])
