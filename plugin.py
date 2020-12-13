@@ -102,7 +102,7 @@ class BasePlugin:
                 UpdateCustomSensor("Ziekenhuis opnames per dag",2,data["intake_hospital_ma"]["last_value"]["moving_average_hospital"])
                 UpdateCustomSensor("Positief getest mensen per dag (per 100.000 inwoners)",3,data["infected_people_delta_normalized"]["last_value"]["infected_daily_increase"])
                 UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,data["infectious_people_count_normalized"]["last_value"]["infectious_avg_normalized"])
-                UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,data["infectious_people_count"]["last_value"]["infectious_avg"])
+                UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,data["infectious_people_last_known_average"]["last_value"]["infectious_avg"])
                 if (data["reproduction_index_last_known_average"]["last_value"]["reproduction_index_avg"]==None):
                     Debug("reproduction index = none")
                 else:
