@@ -97,27 +97,31 @@ class BasePlugin:
                 Debug("LastUpdate("+str(LastUpdate)+") > LastDashboardUpdate("+str(LastDashboardUpdate)+"), updating sensors...")
                 Domoticz.Log("New data available at dashboard, updating sensors...")
 
-                #Calculate last know value of infectious people normalized from JSON
-                infectious_people_count_normalized=0
-                for i in data["infectious_people_count_normalized"]["values"]:
-                    if i["infectious_avg_normalized"] != None:
-                        infectious_people_count_normalized=i["infectious_avg_normalized"]
+                #Calculate last know value of infectious people from JSON
+                infectious_people_count=0
+                for i in data["infectious_people"]["values"]:
+                    if i["estimate"] != None:
+                        infectious_people_count=i["estimate"]
+
+                #Calculate last know value of infectious people from JSON
+                reproduction_index=0
+                for i in data["reproduction"]["values"]:
+                    if i["index_average"] != None:
+                        reproduction_index=i["index_average"]
 
                 #Update the sensors
-                UpdateCustomSensor("Intensive care-opnames per dag",1,data["intake_intensivecare_ma"]["last_value"]["moving_average_ic"])
-                UpdateCustomSensor("Ziekenhuis opnames per dag",2,data["intake_hospital_ma"]["last_value"]["moving_average_hospital"])
-                UpdateCustomSensor("Positief getest mensen per dag (per 100.000 inwoners)",3,data["infected_people_delta_normalized"]["last_value"]["infected_daily_increase"])
+                UpdateCustomSensor("Intensive care-opnames per dag",1,data["intensive_care_nice"]["last_value"]["admissions_moving_average"])
+                UpdateCustomSensor("Ziekenhuis opnames per dag",2,data["hospital_nice"]["last_value"]["admissions_moving_average"])
+                UpdateCustomSensor("Positief getest mensen per dag (per 100.000 inwoners)",3,data["tested_overall"]["last_value"]["infected_per_100k"])
                 #UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,data["infectious_people_count_normalized"]["last_value"]["infectious_avg_normalized"])
-                UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,infectious_people_count_normalized)
-                UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,data["infectious_people_last_known_average"]["last_value"]["infectious_avg"])
-                if (data["reproduction_index_last_known_average"]["last_value"]["reproduction_index_avg"]==None):
-                    Debug("reproduction index = none")
-                else:
-                    UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(data["reproduction_index_last_known_average"]["last_value"]["reproduction_index_avg"])*100)
+                #UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,infectious_people_count_normalized)
+                #UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,data["infectious_people_last_known_average"]["last_value"]["infectious_avg"])
+                UpdateCustomSensor("Totaal aantal besmettelijke mensen",5,infectious_people_count)
+                UpdatePercentageSensor("Reproductiegetal (percentage)",6,float(reproduction_index)*100)
                 UpdateCustomSensor("Positief geteste verpleeghuisbewoners per dag",7,data["nursing_home"]["last_value"]["newly_infected_people"])
                 UpdateCustomSensor("Overleden verpleeghuisbewoners per dag",8,data["nursing_home"]["last_value"]["deceased_daily"])
                 UpdateCustomSensor("Rioolwater meting",9,data["sewer"]["last_value"]["average"])
-                UpdateCustomSensor("positief geteste mensen",10,data["infected_people_total"]["last_value"]["infected_daily_total"])
+                UpdateCustomSensor("positief geteste mensen",10,data["tested_overall"]["last_value"]["infected"])
 
                 #Update SafetyRegionSensors
                 if len(SafetyRegions)>0:
@@ -151,10 +155,10 @@ class BasePlugin:
 
                                 #Update the sensors
                                 UpdateCustomSensor(prefix+"virusdeeltjes per mm rioolwater",region*9+1,data["sewer"]["last_value"]["average"])
-                                UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["results_per_region"]["last_value"]["hospital_moving_avg_per_region"])
-                                UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["results_per_region"]["last_value"]["infected_increase_per_region"])
-                                UpdateCustomSensor(prefix+"Aantal besmette personen",region*9+4,data["results_per_region"]["last_value"]["infected_total_counts_per_region"])
-                                UpdateCustomSensor(prefix+"Aantal personen in ziekenhuis",region*9+5,data["results_per_region"]["last_value"]["hospital_total_counts_per_region"])
+                                UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["hospital_nice"]["last_value"]["admissions_moving_average"])
+                                UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["tested_overall"]["last_value"]["infected_per_100k"])
+                                # UpdateCustomSensor(prefix+"Aantal besmette personen",region*9+4,data[""]["last_value"]["infected_total_counts_per_region"])
+                                #UpdateCustomSensor(prefix+"Aantal personen in ziekenhuis",region*9+5,data["results_per_region"]["last_value"]["hospital_total_counts_per_region"])
                                 
                                 
                             else:
