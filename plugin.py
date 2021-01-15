@@ -111,7 +111,7 @@ class BasePlugin:
 
                 #Update the sensors
                 UpdateCustomSensor("Intensive care-opnames per dag",1,data["intensive_care_nice"]["last_value"]["admissions_moving_average"])
-                UpdateCustomSensor("Ziekenhuis opnames per dag",2,data["hospital_nice"]["last_value"]["admissions_moving_average"])
+                UpdateCustomSensor("Ziekenhuis opnames per dag",2,data["hospital_nice"]["last_value"]["admissions_on_date_of_reporting"])
                 UpdateCustomSensor("Positief getest mensen per dag (per 100.000 inwoners)",3,data["tested_overall"]["last_value"]["infected_per_100k"])
                 #UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,data["infectious_people_count_normalized"]["last_value"]["infectious_avg_normalized"])
                 #UpdateCustomSensor("Aantal bestmettelijke mensen (per 100.000 inwoners)",4,infectious_people_count_normalized)
@@ -155,7 +155,7 @@ class BasePlugin:
 
                                 #Update the sensors
                                 UpdateCustomSensor(prefix+"virusdeeltjes per mm rioolwater",region*9+1,data["sewer"]["last_value"]["average"])
-                                UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["hospital_nice"]["last_value"]["admissions_moving_average"])
+                                UpdateCustomSensor(prefix+"Ziekenhuis opnames per dag",region*9+2,data["hospital_nice"]["last_value"]["admissions_on_date_of_reporting"])
                                 UpdateCustomSensor(prefix+"Positief getest mensen per dag (per 100.000 inwoners)",region*9+3,data["tested_overall"]["last_value"]["infected_per_100k"])
                                 # UpdateCustomSensor(prefix+"Aantal besmette personen",region*9+4,data[""]["last_value"]["infected_total_counts_per_region"])
                                 #UpdateCustomSensor(prefix+"Aantal personen in ziekenhuis",region*9+5,data["results_per_region"]["last_value"]["hospital_total_counts_per_region"])
